@@ -1,6 +1,6 @@
 /**
  * A class that represents a single cell of the maze.
- * @author Ms. Namasivayam
+ * @author Ms. Namasivayam, Kirin Debnath
  * @version 03/10/2023
  */
 
@@ -50,5 +50,16 @@ public class MazeCell {
 
     public void setWall(boolean wall) {
         this.isWall = wall;
+    }
+
+    public String toString() {
+
+        try {
+            return "Cell: (" + this.getRow() + " , " + this.getCol() + ") Parent: (" + this.getParent().getRow() + " , " + this.getParent().getCol() + ")";
+        }
+        catch (NullPointerException e) {
+            return "Cell: (" + this.getRow() + " , " + this.getCol() + ") Parent: (null,null)";
+        }
+
     }
 }
