@@ -52,6 +52,13 @@ public class MazeCell {
         this.isWall = wall;
     }
 
+
+    /**
+     * returns current cells coordinates and parent cell coordinates
+     * if no parent cell prints replaces parent cords w/ (null, null)
+     * @return Formated information of current (x,y) and parent (x,y)
+     **/
+    @Override
     public String toString() {
 
         try {

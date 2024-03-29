@@ -141,13 +141,14 @@ public class Maze {
 
     /**
      * Determines if the cell is valid to visit.
+     * Valid iff exists on board, not a wall and not explored
      * @param row the int row val
      * @param col the int col val
      * @return boolean true/false
      */
     public boolean isValidCell(int row, int col) {
-        // TODO: Complete this function
-        if(row >= 0 && row <= numRows - 1 && col >= 0 && col <= numCols - 1 && !mazeGrid[row][col].isWall() && !mazeGrid[row][col].isExplored()){
+        if(row >= 0 && row <= numRows - 1 && col >= 0 && col <= numCols - 1
+                && !mazeGrid[row][col].isWall() && !mazeGrid[row][col].isExplored()){
             return true;
         }
 

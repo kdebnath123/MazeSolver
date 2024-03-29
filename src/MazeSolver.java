@@ -35,14 +35,14 @@ public class MazeSolver {
         Stack<MazeCell> stc = new Stack<MazeCell>();
         stc.push(maze.getEndCell());
 
+        // Traces back through cells adding parents to stack
         while(stc.peek() != maze.getStartCell()){
-            //System.out.println(stc.peek().getParent().getRow() + "," + stc.peek().getParent().getRow());
             stc.push(stc.peek().getParent());
         }
 
+        // Adds each element from stack to ArrayList thus reversing the order
         ArrayList<MazeCell> sol = new ArrayList<MazeCell>();
-
-        while(!stc.empty()){
+        while(!stc.empty()) {
             sol.add(stc.pop());
         }
 
@@ -54,57 +54,50 @@ public class MazeSolver {
      * @return An ArrayList of MazeCells in order from the start to end cell
      */
     public ArrayList<MazeCell> solveMazeDFS() {
-        // TODO: Use DFS to solve the maze
-        // Explore the cells in the order: NORTH, EAST, SOUTH, WEST
         Stack<MazeCell> stc = new Stack<MazeCell>();
+
+        // Pushes first cell
         stc.push(maze.getStartCell());
+        maze.getStartCell().setExplored(true);
+
+        // Calls recursive helper function
         DFS(stc);
 
-
         return getSolution();
+
+
     }
 
-
+    /**
+     * Recursively performs a Depth-First Search assigning next/parent cell relationships
+     * Precondition: stc must have at least one element
+     * @param stc stack used to store possible branches to explore
+     **/
     public void DFS(Stack<MazeCell> stc) {
 
-        stc.peek().setExplored(true);
-
-        if(stc.peek().getRow() == maze.getEndCell().getRow() && stc.peek().getCol() == maze.getEndCell().getCol()){
+        if(stc.peek().equals(maze.getEndCell())) {
             return;
         }
 
-        MazeCell temp = stc.peek();
-        int row = temp.getRow();
-        int col = temp.getCol();
+        // Cell that becomes parent for next cells
+        MazeCell parent = stc.pop();
+        int currentRow;
+        int currentCol;
 
-        // West
-        if(maze.isValidCell(row - 1, col)) {
-           maze.getCell(row - 1, col).setParent(temp);
-           stc.push(maze.getCell(row - 1, col));
-           DFS(stc);
+        // Adds NORTH, EAST, SOUTH, WEST directions to stack if valid
+        // Calculations done using sin/cos trig functions
+        for (double i = 0; i < 2* Math.PI; i += Math.PI / 2.0){
+            currentRow = parent.getRow() + (int)Math.round(Math.cos(i));
+            currentCol = parent.getCol() + (int)Math.round(Math.sin(i));
+
+            if(maze.isValidCell(currentRow, currentCol)) {
+                maze.getCell(currentRow, currentCol).setExplored(true);
+                maze.getCell(currentRow, currentCol).setParent(parent);
+                stc.push(maze.getCell(currentRow, currentCol));
+            }
         }
 
-        // South
-        if(maze.isValidCell(row, col - 1)) {
-            maze.getCell(row, col - 1).setParent(temp);
-            stc.push(maze.getCell(row, col - 1));
-            DFS(stc);
-
-        }
-
-        // East
-        if(maze.isValidCell(row + 1, col)) {
-            maze.getCell(row + 1, col).setParent(temp);
-            stc.push(maze.getCell(row + 1, col));
-            DFS(stc);
-        }
-
-        // North
-        if(maze.isValidCell(row, col + 1)) {
-            maze.getCell(row, col + 1).setParent(temp);
-            stc.push(maze.getCell(row, col + 1));
-            DFS(stc);
-        }
+        DFS(stc);
     }
 
     /**
@@ -112,57 +105,50 @@ public class MazeSolver {
      * @return An ArrayList of MazeCells in order from the start to end cell
      */
     public ArrayList<MazeCell> solveMazeBFS() {
-        // TODO: Use BFS to solve the maze
-        // Explore the cells in the order: NORTH, EAST, SOUTH, WEST
+
         Queue<MazeCell> que = new LinkedList<MazeCell>();
         que.add(maze.getStartCell());
-        BFS(que);
+        que.peek().setExplored(true);
 
+        BFS(que);
 
         return getSolution();
 
     }
 
+
+    /**
+     * Recursively performs a Breadth-First Search assigning next/parent cell relationships
+     * Precondition: stc must have at least one element
+     * @param que queue used to store possible branches to explore
+     **/
     public void BFS(Queue<MazeCell> que) {
 
-        que.peek().setExplored(true);
-
-        if(que.peek().getRow() == maze.getEndCell().getRow() && que.peek().getCol() == maze.getEndCell().getCol()){
+        if(que.peek().equals(maze.getEndCell())){
             return;
         }
 
-        MazeCell temp = que.peek();
-        int row = temp.getRow();
-        int col = temp.getCol();
+        // Cell that becomes parent for next cells
+        MazeCell parent = que.remove();
+        int currentRow;
+        int currentCol;
 
-        // West
-        if(maze.isValidCell(row - 1, col)) {
-            maze.getCell(row - 1, col).setParent(temp);
-            que.add(maze.getCell(row - 1, col));
-            BFS(que);
+
+        // Adds NORTH, EAST, SOUTH, WEST directions to stack if valid
+        // Calculations done using sin/cos trig functions
+        for (double i = 0; i < 2* Math.PI; i += Math.PI / 2.0){
+            currentRow = parent.getRow() + (int)Math.round(Math.cos(i));
+            currentCol = parent.getCol() + (int)Math.round(Math.sin(i));
+
+            if(maze.isValidCell(currentRow, currentCol)) {
+                maze.getCell(currentRow, currentCol).setExplored(true);
+                maze.getCell(currentRow, currentCol).setParent(parent);
+                que.add(maze.getCell(currentRow, currentCol));
+            }
         }
 
-        // South
-        if(maze.isValidCell(row, col - 1)) {
-            maze.getCell(row, col - 1).setParent(temp);
-            que.add(maze.getCell(row, col - 1));
-            BFS(que);
+        BFS(que);
 
-        }
-
-        // East
-        if(maze.isValidCell(row + 1, col)) {
-            maze.getCell(row + 1, col).setParent(temp);
-            que.add(maze.getCell(row + 1, col));
-            BFS(que);
-        }
-
-        // North
-        if(maze.isValidCell(row, col + 1)) {
-            maze.getCell(row, col + 1).setParent(temp);
-            que.add(maze.getCell(row, col + 1));
-            BFS(que);
-        }
     }
 
 
@@ -171,10 +157,13 @@ public class MazeSolver {
         // Create the Maze to be solved
         Maze maze = new Maze("Resources/maze3.txt");
 
+
         // Create the MazeSolver object and give it the maze
         MazeSolver ms = new MazeSolver();
         ms.setMaze(maze);
 
+        // Separate each Maze
+        System.out.println("~~~~~~~~~~~~~~~");
 
         // Solve the maze using DFS and print the solution
         ArrayList<MazeCell> sol = ms.solveMazeDFS();
@@ -182,6 +171,9 @@ public class MazeSolver {
 
         // Reset the maze
         maze.reset();
+
+        // Separate each Maze
+        System.out.println("~~~~~~~~~~~~~~~");
 
         // Solve the maze using BFS and print the solution
         sol = ms.solveMazeBFS();
